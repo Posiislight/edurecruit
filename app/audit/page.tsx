@@ -114,7 +114,7 @@ export default function AuditLogPage() {
   const filtered = mockAuditLog.filter((entry) => {
     const matchesSearch = entry.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       entry.programme.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesDecision = !decisionFilter || entry.finalDecision === decisionFilter
+    const matchesDecision = decisionFilter === 'all' || !decisionFilter || entry.finalDecision === decisionFilter
     const matchesDateRange = true // Simplified for demo
 
     return matchesSearch && matchesDecision && matchesDateRange
@@ -181,7 +181,7 @@ export default function AuditLogPage() {
                     <SelectValue placeholder="All decisions" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All decisions</SelectItem>
+                    <SelectItem value="all">All decisions</SelectItem>
                     <SelectItem value="admitted">Admitted</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="rejected">Rejected</SelectItem>

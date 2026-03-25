@@ -32,7 +32,7 @@ export default function ConfirmationPage() {
               </p>
             </div>
 
-            <div className="bg-primary/10 border border-primary rounded-lg p-6">
+            <div className="bg-primary/10 border border-primary rounded-lg p-6" suppressHydrationWarning>
               <p className="text-sm text-muted-foreground mb-2">Your Reference Number</p>
               <p className="text-2xl font-bold text-primary font-mono">{referenceNumber}</p>
               <p className="text-xs text-muted-foreground mt-2">

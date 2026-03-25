@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, use } from 'react'
 import { Navbar } from '@/components/navbar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,14 +12,15 @@ import { Textarea } from '@/components/ui/textarea'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
-export default function ApplicantDetailPage({ params }: { params: { id: string } }) {
+export default function ApplicantDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const [decision, setDecision] = useState<'admit' | 'review' | 'reject' | null>(null)
   const [overrideReason, setOverrideReason] = useState('')
   const [showOverride, setShowOverride] = useState(false)
 
   // Mock data - in a real app, this would come from a database
   const applicantData = {
-    id: params.id,
+    id: id,
     name: 'Chioma Eze',
     email: 'chioma.eze@email.com',
     phone: '+234 801 234 5678',
