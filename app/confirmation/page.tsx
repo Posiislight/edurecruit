@@ -1,5 +1,6 @@
 'use client'
 
+import { useId } from 'react'
 import Link from 'next/link'
 import { Navbar } from '@/components/navbar'
 import { Button } from '@/components/ui/button'
@@ -7,7 +8,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { CheckCircle2, Clock } from 'lucide-react'
 
 export default function ConfirmationPage() {
-  const referenceNumber = `ADMIT-${Date.now().toString().slice(-9)}`
+  const id = useId()
+  const referenceNumber = `ADMIT-${id.replace(/:/g, '').substring(0, 9).toUpperCase()}`
 
   return (
     <div className="min-h-screen bg-slate-50">

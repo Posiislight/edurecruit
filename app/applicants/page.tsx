@@ -42,8 +42,8 @@ export default function ApplicantsPage() {
 
   let filtered = mockApplicants.filter((app) => {
     const matchesSearch = app.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesProgramme = !programmeFilter || app.programme === programmeFilter
-    const matchesStatus = !statusFilter || app.status === statusFilter
+    const matchesProgramme = programmeFilter === 'all' || !programmeFilter || app.programme === programmeFilter
+    const matchesStatus = statusFilter === 'all' || !statusFilter || app.status === statusFilter
 
     return matchesSearch && matchesProgramme && matchesStatus
   })
@@ -96,7 +96,7 @@ export default function ApplicantsPage() {
                     <SelectValue placeholder="All programmes" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All programmes</SelectItem>
+                    <SelectItem value="all">All programmes</SelectItem>
                     <SelectItem value="Computer Science">Computer Science</SelectItem>
                     <SelectItem value="Medicine">Medicine</SelectItem>
                     <SelectItem value="Law">Law</SelectItem>
@@ -116,7 +116,7 @@ export default function ApplicantsPage() {
                     <SelectValue placeholder="All statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All statuses</SelectItem>
+                    <SelectItem value="all">All statuses</SelectItem>
                     <SelectItem value="admitted">Admitted</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="rejected">Rejected</SelectItem>
