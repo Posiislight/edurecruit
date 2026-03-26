@@ -95,6 +95,10 @@ WSGI_APPLICATION = "admitai.wsgi.application"
 
 if os.environ.get("DATABASE_URL"):
     DATABASES = {"default": dj_database_url.config(conn_max_age=0)}
+    # Enforce SSL for Postgres in production
+    if DATABASES["default"].get("ENGINE") == "django.db.backends.postgresql":
+        DATABASES["default"].setdefault("OPTIONS", {})
+        DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 else:
     DATABASES = {
         "default": {
@@ -187,6 +191,10 @@ LOGGING = {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
             "style": "{",
         },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
     },
     "handlers": {
         "console": {
@@ -202,6 +210,16 @@ LOGGING = {
         "django": {
             "handlers": ["console"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": True,
+        },
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "ERROR",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
             "propagate": False,
         },
     },
