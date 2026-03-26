@@ -1,72 +1,73 @@
 'use client'
 
-import { Navbar } from '@/components/navbar'
+import { useEffect, useState } from 'react'
 import { StatsCard } from '@/components/stats-card'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Users, CheckCircle2, XCircle, Clock } from 'lucide-react'
-
-const chartData = [
-  { name: 'Computer Science', applications: 240, admitted: 80, pending: 100, rejected: 60 },
-  { name: 'Medicine', applications: 180, admitted: 50, pending: 80, rejected: 50 },
-  { name: 'Law', applications: 200, admitted: 70, pending: 65, rejected: 65 },
-  { name: 'Engineering', applications: 280, admitted: 100, pending: 120, rejected: 60 },
-  { name: 'Business', applications: 320, admitted: 140, pending: 100, rejected: 80 },
-  { name: 'Nursing', applications: 160, admitted: 50, pending: 70, rejected: 40 },
-]
-
-const recentApplications = [
-  {
-    id: '1',
-    name: 'Chioma Eze',
-    programme: 'Computer Science',
-    aiScore: 78,
-    confidence: 'high',
-    recommendation: 'admit',
-    status: 'admitted',
-  },
-  {
-    id: '2',
-    name: 'Abdullahi Musa',
-    programme: 'Medicine',
-    aiScore: 65,
-    confidence: 'low',
-    recommendation: 'review',
-    status: 'pending',
-  },
-  {
-    id: '3',
-    name: 'Zainab Ibrahim',
-    programme: 'Law',
-    aiScore: 82,
-    confidence: 'high',
-    recommendation: 'admit',
-    status: 'admitted',
-  },
-  {
-    id: '4',
-    name: 'Emeka Okafor',
-    programme: 'Engineering',
-    aiScore: 45,
-    confidence: 'low',
-    recommendation: 'reject',
-    status: 'rejected',
-  },
-  {
-    id: '5',
-    name: 'Fatima Hassan',
-    programme: 'Nursing',
-    aiScore: 72,
-    confidence: 'high',
-    recommendation: 'review',
-    status: 'pending',
-  },
-]
+import { fetchApi } from '@/lib/api'
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<any>(null)
+  const [chartData, setChartData] = useState<any[]>([])
+  const [recentApplications, setRecentApplications] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const [statsRes, appsRes, progsRes] = await Promise.all([
+          fetchApi('/api/dashboard/stats/'),
+          fetchApi('/api/applications/'),
+          fetchApi('/api/programmes/')
+        ]);
+
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          setStats(statsData);
+          setChartData(statsData.applications_per_programme.map((p: any) => ({
+            name: p.programme_name,
+            total: p.count,
+          })));
+        }
+
+        if (appsRes.ok && progsRes.ok) {
+          const appsData = await appsRes.json();
+          const progsData = await progsRes.json();
+          
+          const progMap = new Map();
+          progsData.results?.forEach((p: any) => progMap.set(p.id, p.name));
+          // If Programmes API isn't paginated, it might be an array:
+          if (Array.isArray(progsData)) {
+            progsData.forEach((p: any) => progMap.set(p.id, p.name));
+          }
+
+          const formattedApps = appsData.results?.slice(0, 10).map((app: any) => ({
+            id: app.id,
+            name: app.student_name,
+            programme: progMap.get(app.programme) || 'Unknown',
+            aiScore: app.ai_score || '-',
+            confidence: app.screening_decision?.confidence || '-',
+            recommendation: app.screening_decision?.recommendation || '-',
+            status: app.status,
+          })) || [];
+          setRecentApplications(formattedApps);
+        }
+      } catch (e) {
+        console.error("Dashboard error", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDashboard();
+  }, [])
+
+  if (loading) {
+     return <div className="min-h-screen bg-slate-50 p-6">Loading dashboard...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navbar variant="dashboard" />
 
       <section className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
@@ -78,25 +79,25 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard
             title="Total Applications"
-            value="1,380"
+            value={stats?.total_applications?.toString() || "0"}
             icon={<Users className="w-5 h-5" />}
             description="This cycle"
           />
           <StatsCard
             title="Pending Review"
-            value="535"
+            value={stats?.pending_review?.toString() || "0"}
             icon={<Clock className="w-5 h-5" />}
             description="Awaiting decision"
           />
           <StatsCard
             title="Admitted"
-            value="490"
+            value={stats?.admitted?.toString() || "0"}
             icon={<CheckCircle2 className="w-5 h-5" />}
             description="Accepted candidates"
           />
           <StatsCard
             title="Rejected"
-            value="355"
+            value={stats?.rejected?.toString() || "0"}
             icon={<XCircle className="w-5 h-5" />}
             description="Not qualified"
           />
@@ -120,9 +121,7 @@ export default function DashboardPage() {
                   }}
                 />
                 <Legend />
-                <Bar dataKey="admitted" stackId="a" fill="var(--chart-1)" />
-                <Bar dataKey="pending" stackId="a" fill="var(--chart-3)" />
-                <Bar dataKey="rejected" stackId="a" fill="var(--chart-4)" />
+                <Bar dataKey="total" fill="var(--chart-1)" name="Total Applications" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

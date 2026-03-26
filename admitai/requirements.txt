@@ -1,0 +1,10 @@
+django~=4.2
+djangorestframework
+django-cors-headers
+djangorestframework-simplejwt
+django-filter
+python-dotenv
+pillow
+psycopg2-binary
+dj-database-url
+openai>=1.0.0

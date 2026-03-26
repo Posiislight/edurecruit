@@ -1,334 +1,236 @@
 'use client'
-
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Navbar } from '@/components/navbar'
-import { ProgressIndicator } from '@/components/progress-indicator'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+import './flow.css'
+import { fetchApi } from '@/lib/api'
 
-type FormStep = 'personal' | 'programme' | 'olevels' | 'documents' | 'review'
+// Sub-components for steps
+import Step1PersonalInfo from './steps/Step1PersonalInfo'
+import Step2Qualifications from './steps/Step2Qualifications'
+import Step3Statement from './steps/Step3Statement'
+import Step4Documents from './steps/Step4Documents'
+import Step5Review from './steps/Step5Review'
 
-interface PersonalInfo {
-  name: string
-  email: string
-  phone: string
-  stateOfOrigin: string
-}
-
-interface OLevelResult {
-  subject: string
-  grade: string
-}
-
-const STEPS = ['Personal Info', 'Programme', 'O\'level Results', 'Documents', 'Review']
-
-export default function ApplicationForm() {
-  const [currentStep, setCurrentStep] = useState<FormStep>('personal')
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    name: '',
+export default function ApplyFlowPage() {
+  const router = useRouter()
+  const [currentStep, setCurrentStep] = useState(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [programmes, setProgrammes] = useState<any[]>([])
+  
+  // Application State
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
-    stateOfOrigin: '',
+    programmeId: '',
+    jambScore: '',
+    
+    // Step 2
+    year: '2024',
+    olevels: [{ subject: '', grade: '' }],
+    number_of_sittings: 1,
+
+    // Step 3
+    statement: '',
+
+    // Step 4
+    transcript: null as File | null,
+    idCopy: null as File | null,
+
+    // Mocks for others
+    gender: 'Prefer not to say',
+    nationality: 'Nigerian',
+    documents: [],
   })
-  const [programme, setProgramme] = useState('')
-  const [jambScore, setJambScore] = useState('')
-  const [olevels, setOlevels] = useState<OLevelResult[]>([])
-  const [newSubject, setNewSubject] = useState('')
-  const [newGrade, setNewGrade] = useState('')
-  const [documentFile, setDocumentFile] = useState<string>('')
 
-  const currentStepIndex = STEPS.indexOf(STEPS[['personal', 'programme', 'olevels', 'documents', 'review'].indexOf(currentStep)])
+  // Load programs
+  useEffect(() => {
+    fetchApi('/api/programmes/')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setProgrammes(data)
+        } else if (data && Array.isArray(data.results)) {
+          setProgrammes(data.results)
+        } else {
+          console.error("Unexpected API response format:", data)
+          setProgrammes([])
+        }
+      })
+      .catch(console.error)
+  }, [])
 
-  const handlePersonalChange = (field: keyof PersonalInfo, value: string) => {
-    setPersonalInfo((prev) => ({ ...prev, [field]: value }))
-  }
+  const steps = [
+    { title: 'Personal info', id: 1 },
+    { title: 'Qualifications', id: 2 },
+    { title: 'Statement', id: 3 },
+    { title: 'Documents', id: 4 },
+    { title: 'Review', id: 5 },
+  ]
 
-  const handleAddOLevel = () => {
-    if (newSubject && newGrade && olevels.length < 9) {
-      setOlevels((prev) => [...prev, { subject: newSubject, grade: newGrade }])
-      setNewSubject('')
-      setNewGrade('')
+  const handleNext = () => setCurrentStep(s => Math.min(s + 1, 5))
+  const handleBack = () => setCurrentStep(s => Math.max(s - 1, 1))
+
+  const handleSubmit = async () => {
+    if (!formData.programmeId) {
+      alert('Please select a programme in Step 1')
+      setCurrentStep(1)
+      return
+    }
+    if (!formData.jambScore) {
+      alert('Please enter your JAMB score in Step 2')
+      setCurrentStep(2)
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      // Use FormData for multi-part submission (including files)
+      const formDataObj = new FormData()
+      
+      formDataObj.append('student_name', `${formData.firstName} ${formData.lastName}`.trim())
+      formDataObj.append('email', formData.email)
+      formDataObj.append('phone', formData.phone)
+      formDataObj.append('programme', formData.programmeId)
+      formDataObj.append('jamb_score', formData.jambScore)
+      formDataObj.append('olevel_results', JSON.stringify(formData.olevels.filter(o => o.subject && o.grade)))
+      formDataObj.append('state_of_origin', 'Lagos')
+      formDataObj.append('number_of_sittings', formData.number_of_sittings.toString())
+      formDataObj.append('result_year', (formData.year || '2024').toString())
+      
+      if (formData.transcript) {
+        formDataObj.append('transcript_upload', formData.transcript)
+      }
+      if (formData.idCopy) {
+        formDataObj.append('id_upload', formData.idCopy)
+      }
+
+      const res = await fetchApi('/api/applications/', {
+        method: 'POST',
+        // Do not set Content-Type header, let the browser set it for FormData
+        headers: {}, 
+        body: formDataObj
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ detail: 'Unknown error' }))
+        console.error('Submission error:', errorData)
+        
+        // Format the error message for the user
+        let errorMsg = 'Failed to submit application:\n'
+        if (typeof errorData === 'object') {
+          Object.entries(errorData).forEach(([key, val]) => {
+            errorMsg += `- ${key}: ${Array.isArray(val) ? val.join(', ') : val}\n`
+          })
+        } else {
+          errorMsg += errorData
+        }
+        
+        alert(errorMsg)
+        throw new Error('Failed to submit application')
+      }
+      
+      const data = await res.json()
+      // Store the app data for the confirmation page to show the result immediately
+      localStorage.setItem('latest_application', JSON.stringify(data))
+      
+      router.push('/confirmation')
+    } catch (err: any) {
+      console.error(err)
+      if (!err.message?.includes('Failed to submit')) {
+        alert('Error submitting application: ' + err.message)
+      }
+      setIsSubmitting(false)
     }
   }
 
-  const handleRemoveOLevel = (index: number) => {
-    setOlevels((prev) => prev.filter((_, i) => i !== index))
+  const updateForm = (key: string, value: any) => {
+    setFormData(prev => ({ ...prev, [key]: value }))
   }
 
-  const handleNext = () => {
-    const stepOrder: FormStep[] = ['personal', 'programme', 'olevels', 'documents', 'review']
-    const currentIndex = stepOrder.indexOf(currentStep)
-    if (currentIndex < stepOrder.length - 1) {
-      setCurrentStep(stepOrder[currentIndex + 1])
-    }
-  }
-
-  const handlePrevious = () => {
-    const stepOrder: FormStep[] = ['personal', 'programme', 'olevels', 'documents', 'review']
-    const currentIndex = stepOrder.indexOf(currentStep)
-    if (currentIndex > 0) {
-      setCurrentStep(stepOrder[currentIndex - 1])
-    }
-  }
+  // Calculate generic progress percentage
+  const progressPercent = ((currentStep - 1) / 4) * 100
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <Navbar />
-
-      <section className="max-w-3xl mx-auto px-6 py-12">
-        <div className="mb-12">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Application Form</h1>
-          <p className="text-muted-foreground">Step {STEPS.indexOf(STEPS[['personal', 'programme', 'olevels', 'documents', 'review'].indexOf(currentStep)]) + 1} of {STEPS.length}</p>
+    <div className="apply-flow-wrapper">
+      <div className="app-header">
+        <div className="sub-header">
+          <div className="page-title">Your application</div>
+          <div className="page-meta">
+            {(Array.isArray(programmes) ? programmes : []).find(p => p.id?.toString() === formData.programmeId)?.name || 'Undecided Programme'} · 2025/26
+          </div>
+          
+          <div className="steps-row">
+            {steps.map((step, idx) => {
+              const isActive = currentStep === step.id
+              const isDone = currentStep > step.id
+              return (
+                <div key={step.id} className={idx < steps.length - 1 ? "s-seg" : ""}>
+                  <div className="s-inner" onClick={() => currentStep > step.id && setCurrentStep(step.id)}>
+                    <div className={`s-circle ${isActive ? 'active' : isDone ? 'done' : 'idle'}`}>
+                      {isDone ? '✓' : step.id}
+                    </div>
+                    <span className={`s-name ${isActive ? 'active' : isDone ? 'done' : 'idle'}`}>
+                      {step.title}
+                    </span>
+                  </div>
+                  {idx < steps.length - 1 && (
+                    <div className={`s-line ${isDone ? 'done' : 'idle'}`}></div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+          <div className="active-underline" style={{ width: `${progressPercent}%` }}></div>
         </div>
+      </div>
 
-        <ProgressIndicator steps={STEPS} currentStep={currentStepIndex} />
-
-        <Card className="mt-12 border-0 shadow-sm">
-          <CardHeader>
-            <CardTitle>{STEPS[currentStepIndex]}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {currentStep === 'personal' && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    value={personalInfo.name}
-                    onChange={(e) => handlePersonalChange('name', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john@example.com"
-                    value={personalInfo.email}
-                    onChange={(e) => handlePersonalChange('email', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    placeholder="+234 800 000 0000"
-                    value={personalInfo.phone}
-                    onChange={(e) => handlePersonalChange('phone', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="state">State of Origin</Label>
-                  <Select value={personalInfo.stateOfOrigin} onValueChange={(value) => handlePersonalChange('stateOfOrigin', value)}>
-                    <SelectTrigger id="state">
-                      <SelectValue placeholder="Select state..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="lagos">Lagos</SelectItem>
-                      <SelectItem value="abuja">Abuja</SelectItem>
-                      <SelectItem value="kano">Kano</SelectItem>
-                      <SelectItem value="oyo">Oyo</SelectItem>
-                      <SelectItem value="rivers">Rivers</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 'programme' && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="programme">Select Programme</Label>
-                  <Select value={programme} onValueChange={setProgramme}>
-                    <SelectTrigger id="programme">
-                      <SelectValue placeholder="Choose a programme..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="computer-science">Computer Science</SelectItem>
-                      <SelectItem value="medicine">Medicine</SelectItem>
-                      <SelectItem value="law">Law</SelectItem>
-                      <SelectItem value="engineering">Engineering</SelectItem>
-                      <SelectItem value="business">Business Administration</SelectItem>
-                      <SelectItem value="nursing">Nursing</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="jamb">JAMB Score</Label>
-                  <Input
-                    id="jamb"
-                    type="number"
-                    placeholder="200"
-                    min="0"
-                    max="400"
-                    value={jambScore}
-                    onChange={(e) => setJambScore(e.target.value)}
-                  />
-                </div>
-              </div>
-            )}
-
-            {currentStep === 'olevels' && (
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Add your O&apos;level results (up to 9 subjects)</p>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="subject">Subject</Label>
-                    <Select value={newSubject} onValueChange={setNewSubject}>
-                      <SelectTrigger id="subject">
-                        <SelectValue placeholder="Select subject..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="english">English Language</SelectItem>
-                        <SelectItem value="mathematics">Mathematics</SelectItem>
-                        <SelectItem value="physics">Physics</SelectItem>
-                        <SelectItem value="chemistry">Chemistry</SelectItem>
-                        <SelectItem value="biology">Biology</SelectItem>
-                        <SelectItem value="history">History</SelectItem>
-                        <SelectItem value="government">Government</SelectItem>
-                        <SelectItem value="economics">Economics</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="grade">Grade</Label>
-                    <Select value={newGrade} onValueChange={setNewGrade}>
-                      <SelectTrigger id="grade">
-                        <SelectValue placeholder="Select grade..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="A1">A1</SelectItem>
-                        <SelectItem value="B2">B2</SelectItem>
-                        <SelectItem value="B3">B3</SelectItem>
-                        <SelectItem value="C4">C4</SelectItem>
-                        <SelectItem value="C5">C5</SelectItem>
-                        <SelectItem value="C6">C6</SelectItem>
-                        <SelectItem value="D7">D7</SelectItem>
-                        <SelectItem value="E8">E8</SelectItem>
-                        <SelectItem value="F9">F9</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {olevels.length < 9 && (
-                  <Button onClick={handleAddOLevel} variant="outline" className="w-full">
-                    Add Subject
-                  </Button>
-                )}
-
-                {olevels.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold">Your Results ({olevels.length}/9)</p>
-                    {olevels.map((result, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
-                        <span className="text-sm">
-                          {result.subject} - <span className="font-semibold">{result.grade}</span>
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemoveOLevel(index)}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {currentStep === 'documents' && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="document">Upload O&apos;level Result (PDF or Image)</Label>
-                  <div className="border-2 border-dashed rounded-lg p-8 text-center">
-                    <Input
-                      id="document"
-                      type="file"
-                      accept=".pdf,.jpg,.png"
-                      onChange={(e) => {
-                        if (e.target.files?.[0]) {
-                          setDocumentFile(e.target.files[0].name)
-                        }
-                      }}
-                      className="hidden"
-                    />
-                    <label htmlFor="document" className="cursor-pointer">
-                      <p className="text-sm text-muted-foreground">
-                        {documentFile ? (
-                          <>
-                            <span className="font-semibold text-primary">{documentFile}</span>
-                            <br />
-                            Click to change
-                          </>
-                        ) : (
-                          <>
-                            Click to upload or drag and drop
-                            <br />
-                            <span className="text-xs">PDF, JPG or PNG (max 10MB)</span>
-                          </>
-                        )}
-                      </p>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 'review' && (
-              <div className="space-y-6">
-                <div className="bg-accent/10 border border-accent rounded-lg p-4">
-                  <h3 className="font-semibold text-sm mb-2">Personal Information</h3>
-                  <div className="space-y-1 text-sm">
-                    <p><span className="text-muted-foreground">Name:</span> {personalInfo.name}</p>
-                    <p><span className="text-muted-foreground">Email:</span> {personalInfo.email}</p>
-                    <p><span className="text-muted-foreground">Phone:</span> {personalInfo.phone}</p>
-                    <p><span className="text-muted-foreground">State:</span> {personalInfo.stateOfOrigin}</p>
-                  </div>
-                </div>
-
-                <div className="bg-primary/10 border border-primary rounded-lg p-4">
-                  <h3 className="font-semibold text-sm mb-2">Programme & Scores</h3>
-                  <div className="space-y-1 text-sm">
-                    <p><span className="text-muted-foreground">Programme:</span> {programme}</p>
-                    <p><span className="text-muted-foreground">JAMB Score:</span> {jambScore}</p>
-                    <p><span className="text-muted-foreground">O&apos;level Subjects:</span> {olevels.length}</p>
-                  </div>
-                </div>
-
-                <Button className="w-full" size="lg" asChild>
-                  <Link href="/confirmation">Submit Application</Link>
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <div className="flex gap-4 mt-8">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentStep === 'personal'}
-            className="flex-1"
-          >
-            Previous
-          </Button>
-          {currentStep !== 'review' && (
-            <Button onClick={handleNext} className="flex-1">
-              Next
-            </Button>
-          )}
-        </div>
-      </section>
+      <div className="flow-body">
+        {currentStep === 1 && (
+          <Step1PersonalInfo 
+            formData={formData} 
+            updateForm={updateForm} 
+            onNext={handleNext}
+            programmes={programmes}
+          />
+        )}
+        {currentStep === 2 && (
+          <Step2Qualifications 
+            formData={formData} 
+            updateForm={updateForm} 
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        )}
+        {currentStep === 3 && (
+          <Step3Statement 
+            formData={formData} 
+            updateForm={updateForm} 
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        )}
+        {currentStep === 4 && (
+          <Step4Documents 
+            formData={formData}
+            updateForm={updateForm}
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        )}
+        {currentStep === 5 && (
+          <Step5Review 
+            formData={formData} 
+            onBack={handleBack}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            programmes={programmes}
+            onEdit={setCurrentStep}
+          />
+        )}
+      </div>
     </div>
   )
 }
