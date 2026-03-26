@@ -19,14 +19,13 @@ def _csv_env(name, defaults=()):
         values.extend(item.strip() for item in raw.split(",") if item.strip())
     return list(dict.fromkeys(values))
 
+
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-change-me")
 DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
 HAS_WHITENOISE = find_spec("whitenoise") is not None
 
 if not DEBUG and not HAS_WHITENOISE:
-    raise ImproperlyConfigured(
-        "whitenoise must be installed when DEBUG is disabled."
-    )
+    raise ImproperlyConfigured("whitenoise must be installed when DEBUG is disabled.")
 
 ALLOWED_HOSTS = _csv_env(
     "ALLOWED_HOSTS",
@@ -92,7 +91,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "admitai.wsgi.application"
 
 if os.environ.get("DATABASE_URL"):
-    DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
+    DATABASES = {"default": dj_database_url.config(conn_max_age=0)}
 else:
     DATABASES = {
         "default": {
