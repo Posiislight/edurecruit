@@ -10,7 +10,11 @@ from rest_framework.views import APIView
 
 from applications.filters import StudentApplicationFilter
 from applications.models import StudentApplication
-from applications.serializers import FinalDecisionSerializer, StudentApplicationSerializer
+from applications.serializers import (
+    FinalDecisionSerializer,
+    PublicApplicationTrackingSerializer,
+    StudentApplicationSerializer,
+)
 from audit.models import AuditLog
 from screening.models import AdmissionsDecision
 
@@ -39,16 +43,15 @@ class StudentApplicationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], permission_classes=[AllowAny])
     def track(self, request):
         ref = request.query_params.get("reference_number")
-        email = request.query_params.get("email")
 
-        if not ref or not email:
+        if not ref:
             return Response(
-                {"detail": "Both reference_number and email are required."},
+                {"detail": "reference_number is required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Standard queryset logic from get_queryset
-        qs = self.get_queryset().filter(reference_number__iexact=ref, email__iexact=email)
+        qs = self.get_queryset().filter(reference_number__iexact=ref)
         app = qs.first()
 
         if not app:
@@ -57,7 +60,7 @@ class StudentApplicationViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = self.get_serializer(app)
+        serializer = PublicApplicationTrackingSerializer(app)
         return Response(serializer.data)
 
 

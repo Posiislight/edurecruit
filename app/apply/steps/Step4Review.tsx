@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 
-export default function Step5Review({ formData, onBack, onSubmit, isSubmitting, programmes, onEdit }: any) {
+export default function Step4Review({ formData, onBack, onSubmit, isSubmitting, programmes, onEdit }: any) {
   const programmeName = programmes.find((p: any) => p.id.toString() === formData.programmeId)?.name || 'Undecided'
   const words = formData.statement ? formData.statement.trim().split(/\s+/).length : 0
 
@@ -10,7 +10,10 @@ export default function Step5Review({ formData, onBack, onSubmit, isSubmitting, 
       <div className="card">
         <div className="card-header">
           <span className="card-title">Review your application</span>
-          <span style={{ fontSize: 12, color: '#1D9E75' }}>Ready to submit</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span className="card-sub">Step 4 of 4</span>
+            <span style={{ fontSize: 12, color: '#1D9E75' }}>Ready to submit</span>
+          </div>
         </div>
         <div className="card-body">
 
@@ -35,6 +38,11 @@ export default function Step5Review({ formData, onBack, onSubmit, isSubmitting, 
               <span className="edit-link" onClick={() => onEdit(2)}>Edit</span>
             </div>
             <div style={{ background: '#f8fafb', borderRadius: 8, padding: '4px 12px' }}>
+              {formData.waecResultFileName ? (
+                <div style={{ fontSize: 12, color: '#0F6E56', padding: '8px 0 4px' }}>
+                  Auto-filled from {formData.waecResultFileName}
+                </div>
+              ) : null}
               {formData.olevels.length > 0 && formData.olevels[0].subject ? (
                 formData.olevels.map((o: any, i: number) => (
                   <div key={i} className="grade-row">
@@ -64,23 +72,6 @@ export default function Step5Review({ formData, onBack, onSubmit, isSubmitting, 
               )}
             </div>
             <div style={{ fontSize: 12, color: '#8a9aab', marginTop: 6 }}>{words} words</div>
-          </div>
-
-          <div className="review-section">
-            <div className="review-section-head">
-              <span className="review-section-title">Supporting documents</span>
-              <span className="edit-link" onClick={() => onEdit(4)}>Edit</span>
-            </div>
-            <div className="review-grid">
-              <div className="review-field">
-                <div className="rf-label">Academic transcript</div>
-                <div className="rf-value">{formData.transcript ? formData.transcript.name : <span style={{ color: '#8a9aab' }}>Not uploaded</span>}</div>
-              </div>
-              <div className="review-field">
-                <div className="rf-label">ID / passport copy</div>
-                <div className="rf-value">{formData.idCopy ? formData.idCopy.name : <span style={{ color: '#8a9aab' }}>Not uploaded (Optional)</span>}</div>
-              </div>
-            </div>
           </div>
 
         </div>

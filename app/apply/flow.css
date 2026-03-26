@@ -154,6 +154,10 @@ textarea:focus { border-color: #2dd4a7; background: #fff; }
 .uz-text { font-size: 13px; color: #5a6a7a; }
 .uz-text span { color: #1D9E75; font-weight: 500; }
 .uz-hint { font-size: 11.5px; color: #aab4be; margin-top: 3px; }
+.upload-feedback { margin-top: 10px; border-radius: 8px; padding: 10px 12px; font-size: 12.5px; line-height: 1.5; }
+.upload-feedback.success { background: #f0fdf9; border: 0.5px solid #9FE1CB; color: #0F6E56; }
+.upload-feedback.error { background: #fef2f2; border: 0.5px solid #f6c9c9; color: #b42318; }
+.upload-feedback.neutral { background: #f8fafb; border: 0.5px solid #dde3ea; color: #5a6a7a; }
 
 .uploaded { display: flex; align-items: center; gap: 10px; background: #f0fdf9; border: 0.5px solid #9FE1CB; border-radius: 8px; padding: 10px 14px; }
 .file-icon { width: 28px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }

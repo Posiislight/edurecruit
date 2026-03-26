@@ -85,6 +85,25 @@ class StudentApplicationSerializer(serializers.ModelSerializer):
         return instance
 
 
+class PublicApplicationTrackingSerializer(serializers.ModelSerializer):
+    screening_decision = AdmissionsDecisionSerializer(read_only=True)
+    programme = ProgrammeSerializer(read_only=True)
+
+    class Meta:
+        model = StudentApplication
+        fields = (
+            "reference_number",
+            "student_name",
+            "programme",
+            "jamb_score",
+            "number_of_sittings",
+            "result_year",
+            "status",
+            "submitted_at",
+            "screening_decision",
+        )
+
+
 class FinalDecisionSerializer(serializers.Serializer):
     application_id = serializers.IntegerField()
     decision = serializers.ChoiceField(choices=["admitted", "rejected", "review"])

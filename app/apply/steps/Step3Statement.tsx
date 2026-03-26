@@ -25,7 +25,7 @@ export default function Step3Statement({ formData, updateForm, onNext, onBack }:
       </div>
 
       <div className="card">
-        <div className="card-header"><span className="card-title">Personal statement</span><span className="card-sub">Step 3 of 5</span></div>
+        <div className="card-header"><span className="card-title">Personal statement</span><span className="card-sub">Step 3 of 4</span></div>
         <div className="card-body">
           <div className="ai-bar">
             <svg className="ai-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#1D9E75" strokeWidth="1"/><path d="M8 5v3.5L10.5 10" stroke="#1D9E75" strokeWidth="1.2" strokeLinecap="round"/></svg>

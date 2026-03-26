@@ -52,7 +52,6 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           <Link href="/" className={`text-sm font-medium transition-colors ${pathname === '/' ? 'text-[#38b2ac]' : 'text-slate-600 hover:text-slate-900'}`}>Home</Link>
           <Link href="/programmes" className={`text-sm font-medium transition-colors ${pathname === '/programmes' ? 'text-[#38b2ac]' : 'text-slate-600 hover:text-slate-900'}`}>Programmes</Link>
-          <Link href="/apply" className={`text-sm font-medium transition-colors ${pathname === '/apply' ? 'text-[#38b2ac]' : 'text-slate-600 hover:text-slate-900'}`}>Apply</Link>
           <Link href="/application-status" className={`text-sm font-medium transition-colors ${pathname === '/application-status' ? 'text-[#38b2ac]' : 'text-slate-600 hover:text-slate-900'}`}>Check Status</Link>
         </div>
         <div className="flex items-center gap-4">

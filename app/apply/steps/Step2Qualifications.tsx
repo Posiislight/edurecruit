@@ -1,8 +1,44 @@
 'use client'
 import React from 'react'
 
+const COMMON_SUBJECTS = [
+  'Agricultural Science',
+  'Arabic',
+  'Biology',
+  'Book Keeping',
+  'Chemistry',
+  'Christian Religious Studies',
+  'Civic Education',
+  'Commerce',
+  'Computer Studies',
+  'Data Processing',
+  'Economics',
+  'English Language',
+  'Financial Accounting',
+  'Food and Nutrition',
+  'French',
+  'Further Mathematics',
+  'Geography',
+  'Government',
+  'Hausa',
+  'Health Education',
+  'History',
+  'Home Management',
+  'Igbo',
+  'Islamic Studies',
+  'Literature in English',
+  'Marketing',
+  'Mathematics',
+  'Music',
+  'Physics',
+  'Technical Drawing',
+  'Visual Arts',
+  'Yoruba',
+]
+
+const GRADE_OPTIONS = ['A1', 'B2', 'B3', 'C4', 'C5', 'C6', 'D7', 'E8', 'F9']
+
 export default function Step2Qualifications({ formData, updateForm, onNext, onBack }: any) {
-  
   const addSubject = () => {
     updateForm('olevels', [...formData.olevels, { subject: '', grade: '' }])
   }
@@ -13,29 +49,20 @@ export default function Step2Qualifications({ formData, updateForm, onNext, onBa
     updateForm('olevels', newItems)
   }
 
-  const commonSubjects = [
-    'English Language',
-    'Mathematics',
-    'Physics',
-    'Chemistry',
-    'Biology',
-    'Agricultural Science',
-    'Economics',
-    'Government',
-    'Literature in English',
-    'Geography',
-    'Christian Religious Studies',
-    'Islamic Studies',
-    'Civic Education',
-    'Further Mathematics',
-    'Commerce',
-    'Financial Accounting',
-    'Technical Drawing',
-    'Visual Arts',
-    'Music',
-    'French',
-    'Arabic'
-  ]
+  const subjectOptions = Array.from(
+    new Set([
+      ...COMMON_SUBJECTS,
+      ...formData.olevels.map((item: any) => item.subject).filter(Boolean),
+    ]),
+  ).sort((left, right) => left.localeCompare(right))
+
+  const currentYear = new Date().getFullYear()
+  const yearOptions = Array.from(
+    new Set([
+      formData.year,
+      ...Array.from({ length: 8 }, (_, index) => String(currentYear - index)),
+    ].filter(Boolean)),
+  ).sort((left, right) => Number(right) - Number(left))
 
   return (
     <div className="two-col">
@@ -43,18 +70,31 @@ export default function Step2Qualifications({ formData, updateForm, onNext, onBa
         <div className="card">
           <div className="card-body">
             <h3 style={{ fontSize: 14, fontWeight: 500, color: '#0a1628', marginBottom: 10 }}>Qualification Guidelines</h3>
-            <p style={{ fontSize: 13, color: '#5a6a7a', lineHeight: 1.5 }}>Please list your O'Level or A-Level equivalent grades. Ensure you include English Language and Mathematics.</p>
+            <p style={{ fontSize: 13, color: '#5a6a7a', lineHeight: 1.5 }}>
+              Enter your O&apos;Level subjects and grades manually below. Please ensure you include English Language,
+              Mathematics, and every subject required for your chosen programme.
+            </p>
           </div>
         </div>
       </div>
 
       <div className="card">
-        <div className="card-header"><span className="card-title">Qualifications & grades</span><span className="card-sub">Step 2 of 5</span></div>
+        <div className="card-header"><span className="card-title">Qualifications & grades</span><span className="card-sub">Step 2 of 4</span></div>
         <div className="card-body">
 
           <div className="ai-bar">
             <svg className="ai-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#1D9E75" strokeWidth="1"/><path d="M8 5v3.5L10.5 10" stroke="#1D9E75" strokeWidth="1.2" strokeLinecap="round"/></svg>
             <span className="ai-text">Your grades are assessed transparently by AI. You will see exactly how each subject contributes to your score after submission.</span>
+          </div>
+
+          <div className="doc-item">
+            <div className="doc-label-row">
+              <span className="doc-label">Manual O&apos;Level entry</span>
+            </div>
+            <div className="doc-hint">
+              Add each subject exactly once and choose the matching grade. Use the button below the table if you need
+              more rows.
+            </div>
           </div>
 
           <div className="field-grid">
@@ -64,10 +104,14 @@ export default function Step2Qualifications({ formData, updateForm, onNext, onBa
             </div>
             <div className="fg">
               <label>Year of completion <span className="req">*</span></label>
-              <select value={formData.year} onChange={(e) => updateForm('year', e.target.value)}><option>2024</option><option>2023</option><option>2022</option><option>2021</option></select>
+              <select value={formData.year} onChange={(e) => updateForm('year', e.target.value)}>
+                {yearOptions.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
             </div>
           </div>
-          
+
           <div className="field-grid full">
              <div className="fg">
               <label>Number of sittings <span className="req">*</span></label>
@@ -86,37 +130,31 @@ export default function Step2Qualifications({ formData, updateForm, onNext, onBa
               {formData.olevels.map((obj: any, idx: number) => (
                 <tr key={idx}>
                   <td>
-                    <select 
-                      style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', cursor: 'pointer' }} 
-                      value={obj.subject} 
+                    <select
+                      style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', cursor: 'pointer' }}
+                      value={obj.subject}
                       onChange={e => updateSubject(idx, 'subject', e.target.value)}
                     >
                       <option value="">Select Subject</option>
-                      {commonSubjects.sort().map(s => (
-                        <option key={s} value={s}>{s}</option>
+                      {subjectOptions.map(subject => (
+                        <option key={subject} value={subject}>{subject}</option>
                       ))}
                     </select>
                   </td>
                   <td>
                     <select style={{ border: 'none', background: 'transparent', outline: 'none', cursor: 'pointer' }} value={obj.grade} onChange={e => updateSubject(idx, 'grade', e.target.value)}>
                       <option value="">Grade</option>
-                      <option value="A1">A1</option>
-                      <option value="B2">B2</option>
-                      <option value="B3">B3</option>
-                      <option value="C4">C4</option>
-                      <option value="C5">C5</option>
-                      <option value="C6">C6</option>
-                      <option value="D7">D7</option>
-                      <option value="E8">E8</option>
-                      <option value="F9">F9</option>
+                      {GRADE_OPTIONS.map(grade => (
+                        <option key={grade} value={grade}>{grade}</option>
+                      ))}
                     </select>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          
-          <button className="avatar-upload" style={{ background: '#f8fafb', color: '#0a1628', border: '1px dashed #dde3ea' }} onClick={addSubject}>+ Add another subject</button>
+
+          <button type="button" className="avatar-upload" style={{ background: '#f8fafb', color: '#0a1628', border: '1px dashed #dde3ea' }} onClick={addSubject}>+ Add another subject</button>
 
         </div>
         <div className="form-footer">

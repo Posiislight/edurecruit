@@ -14,13 +14,13 @@ export default function Step1PersonalInfo({ formData, updateForm, onNext, progra
         <div className="info-card">
           <div className="info-row"><span className="info-key">Status</span><span className="info-val"><span className="status-dot"></span>In progress</span></div>
           <div className="info-row"><span className="info-key">Programme</span><span className="info-val" style={{ maxWidth: '120px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{programmes.find((p: any) => p.id.toString() === formData.programmeId)?.name || 'Undecided'}</span></div>
-          <div className="info-row"><span className="info-key">Step</span><span className="info-val">1 of 5</span></div>
+          <div className="info-row"><span className="info-key">Step</span><span className="info-val">1 of 4</span></div>
           <div className="info-row"><span className="info-key">Deadline</span><span className="info-val" style={{ color: '#c45e1a' }}>Jan 15, 2026</span></div>
         </div>
       </div>
 
       <div className="card">
-        <div className="card-header"><span className="card-title">Personal information</span><span className="card-sub">Step 1 of 5</span></div>
+        <div className="card-header"><span className="card-title">Personal information</span><span className="card-sub">Step 1 of 4</span></div>
         <div className="card-body">
           <div className="field-grid">
             <div className="fg">

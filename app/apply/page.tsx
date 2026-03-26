@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import './flow.css'
 import { fetchApi } from '@/lib/api'
 
@@ -9,8 +8,7 @@ import { fetchApi } from '@/lib/api'
 import Step1PersonalInfo from './steps/Step1PersonalInfo'
 import Step2Qualifications from './steps/Step2Qualifications'
 import Step3Statement from './steps/Step3Statement'
-import Step4Documents from './steps/Step4Documents'
-import Step5Review from './steps/Step5Review'
+import Step4Review from './steps/Step4Review'
 
 export default function ApplyFlowPage() {
   const router = useRouter()
@@ -31,18 +29,16 @@ export default function ApplyFlowPage() {
     year: '2024',
     olevels: [{ subject: '', grade: '' }],
     number_of_sittings: 1,
+    waecResultFileName: '',
+    waecResultNotes: [] as string[],
+    waecExamType: '',
 
     // Step 3
     statement: '',
 
-    // Step 4
-    transcript: null as File | null,
-    idCopy: null as File | null,
-
     // Mocks for others
     gender: 'Prefer not to say',
     nationality: 'Nigerian',
-    documents: [],
   })
 
   // Load programs
@@ -66,11 +62,10 @@ export default function ApplyFlowPage() {
     { title: 'Personal info', id: 1 },
     { title: 'Qualifications', id: 2 },
     { title: 'Statement', id: 3 },
-    { title: 'Documents', id: 4 },
-    { title: 'Review', id: 5 },
+    { title: 'Review', id: 4 },
   ]
 
-  const handleNext = () => setCurrentStep(s => Math.min(s + 1, 5))
+  const handleNext = () => setCurrentStep(s => Math.min(s + 1, 4))
   const handleBack = () => setCurrentStep(s => Math.max(s - 1, 1))
 
   const handleSubmit = async () => {
@@ -87,7 +82,7 @@ export default function ApplyFlowPage() {
 
     setIsSubmitting(true)
     try {
-      // Use FormData for multi-part submission (including files)
+      // Keep the existing FormData submission shape expected by the API.
       const formDataObj = new FormData()
       
       formDataObj.append('student_name', `${formData.firstName} ${formData.lastName}`.trim())
@@ -100,13 +95,6 @@ export default function ApplyFlowPage() {
       formDataObj.append('number_of_sittings', formData.number_of_sittings.toString())
       formDataObj.append('result_year', (formData.year || '2024').toString())
       
-      if (formData.transcript) {
-        formDataObj.append('transcript_upload', formData.transcript)
-      }
-      if (formData.idCopy) {
-        formDataObj.append('id_upload', formData.idCopy)
-      }
-
       const res = await fetchApi('/api/applications/', {
         method: 'POST',
         // Do not set Content-Type header, let the browser set it for FormData
@@ -151,7 +139,7 @@ export default function ApplyFlowPage() {
   }
 
   // Calculate generic progress percentage
-  const progressPercent = ((currentStep - 1) / 4) * 100
+  const progressPercent = ((currentStep - 1) / 3) * 100
 
   return (
     <div className="apply-flow-wrapper">
@@ -213,15 +201,7 @@ export default function ApplyFlowPage() {
           />
         )}
         {currentStep === 4 && (
-          <Step4Documents 
-            formData={formData}
-            updateForm={updateForm}
-            onNext={handleNext}
-            onBack={handleBack}
-          />
-        )}
-        {currentStep === 5 && (
-          <Step5Review 
+          <Step4Review 
             formData={formData} 
             onBack={handleBack}
             onSubmit={handleSubmit}

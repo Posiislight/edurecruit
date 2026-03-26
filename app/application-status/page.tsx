@@ -12,7 +12,6 @@ import { getHardRuleReason, getScoreBreakdown, getTransparencyBreakdown } from '
 
 export default function StudentStatusPage() {
   const [refNumber, setRefNumber] = useState('')
-  const [email, setEmail] = useState('')
   const [application, setApplication] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -28,10 +27,10 @@ export default function StudentStatusPage() {
     setApplication(null)
 
     try {
-      const res = await fetchApi(`/api/applications/track/?reference_number=${refNumber}&email=${email}`)
+      const res = await fetchApi(`/api/applications/track/?reference_number=${encodeURIComponent(refNumber)}`)
       
       if (res.status === 404) {
-        setError('Application not found. Please check your reference number and email.')
+        setError('Application not found. Please check your reference number.')
         return
       }
 
@@ -54,7 +53,7 @@ export default function StudentStatusPage() {
         <div className="text-center mb-12 max-w-2xl px-4">
           <h1 className="text-4xl font-extrabold text-[#0a192f] mb-4 tracking-tight">Track Your Application</h1>
           <p className="text-slate-600 text-lg font-light leading-relaxed">
-            Enter your details to see your status and screening transparency report.
+            Enter your reference number to see your status and screening transparency report.
           </p>
         </div>
 
@@ -62,7 +61,7 @@ export default function StudentStatusPage() {
           <Card className="w-full max-w-xl mx-auto shadow-[0_20px_50px_rgba(0,0,0,0.08)] border-0 rounded-2xl overflow-hidden mb-20 animate-in fade-in zoom-in-95 duration-500">
             <CardHeader className="p-10 pb-2">
               <CardTitle className="text-xl font-bold text-slate-900">Application Details</CardTitle>
-              <CardDescription className="text-slate-500 font-normal">Use the reference number sent to your email.</CardDescription>
+              <CardDescription className="text-slate-500 font-normal">Use the reference number sent after your application was submitted.</CardDescription>
             </CardHeader>
             <CardContent className="p-10 pt-6">
               <form onSubmit={handleTrack} className="space-y-8">
@@ -72,17 +71,6 @@ export default function StudentStatusPage() {
                     placeholder="e.g. ADM-2026-XXXX" 
                     value={refNumber}
                     onChange={(e) => setRefNumber(e.target.value)}
-                    required
-                    className="h-12 bg-slate-50/50 border-slate-200 focus-visible:ring-1 focus-visible:ring-primary rounded-lg"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-800">Email Address</label>
-                  <Input 
-                    type="email"
-                    placeholder="your@email.com" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="h-12 bg-slate-50/50 border-slate-200 focus-visible:ring-1 focus-visible:ring-primary rounded-lg"
                   />
