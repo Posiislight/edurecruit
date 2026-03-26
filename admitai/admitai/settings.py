@@ -68,6 +68,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "admitai.middleware.LoggingMiddleware",
 ]
 
 if HAS_WHITENOISE:
@@ -151,12 +152,8 @@ if frontend_url and frontend_url not in CORS_ALLOWED_ORIGINS:
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*-edurecruit\.vercel\.app$",
 ]
-CORS_ALLOW_ALL_ORIGINS = os.environ.get("CORS_ALLOW_ALL_ORIGINS", "False").lower() in (
-    "1",
-    "true",
-    "yes",
-)
-CORS_ALLOW_CREDENTIALS = not CORS_ALLOW_ALL_ORIGINS
+CORS_ALLOW_ALL_ORIGINS = True  # Temporarily true to diagnose connectivity
+CORS_ALLOW_CREDENTIALS = True
 CORS_PREFLIGHT_MAX_AGE = 600
 CSRF_TRUSTED_ORIGINS = _csv_env(
     "CSRF_TRUSTED_ORIGINS",
