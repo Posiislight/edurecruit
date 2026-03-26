@@ -1,4 +1,5 @@
-const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '')
+const PRODUCTION_URL = 'https://edurecruit-production.up.railway.app'
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '') || (typeof window !== 'undefined' && !window.location.hostname.includes('localhost') ? PRODUCTION_URL : 'http://localhost:8000')
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
