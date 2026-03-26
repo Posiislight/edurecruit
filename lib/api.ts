@@ -26,6 +26,16 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     if (window.location.pathname !== '/officer-login') {
       window.location.href = '/officer-login';
     }
+    return response;
+  }
+
+  // Handle common non-JSON responses from 404/500 pages
+  const contentType = response.headers.get('content-type');
+  if (!response.ok && (!contentType || !contentType.includes('application/json'))) {
+    if (response.status === 404) {
+      throw new Error(`API Endpoint not found: ${endpoint}. Please ensure NEXT_PUBLIC_API_URL is set correctly and the backend is running.`);
+    }
+    throw new Error(`Server error (${response.status}). Please check backend logs.`);
   }
 
   return response;

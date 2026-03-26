@@ -23,6 +23,7 @@ def _csv_env(name, defaults=()):
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-change-me")
 DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
 HAS_WHITENOISE = find_spec("whitenoise") is not None
+ALLOW_ALL_HOSTS = os.environ.get("ALLOW_ALL_HOSTS", "False").lower() in ("1", "true", "yes")
 
 if not DEBUG and not HAS_WHITENOISE:
     raise ImproperlyConfigured("whitenoise must be installed when DEBUG is disabled.")
@@ -31,6 +32,8 @@ ALLOWED_HOSTS = _csv_env(
     "ALLOWED_HOSTS",
     defaults=("localhost", "127.0.0.1", "edurecruit-production.up.railway.app"),
 )
+if ALLOW_ALL_HOSTS:
+    ALLOWED_HOSTS = ["*"]
 railway_public_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
 if railway_public_domain and railway_public_domain not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(railway_public_domain)
@@ -144,7 +147,12 @@ if frontend_url and frontend_url not in CORS_ALLOWED_ORIGINS:
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*-edurecruit\.vercel\.app$",
 ]
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = os.environ.get("CORS_ALLOW_ALL_ORIGINS", "False").lower() in (
+    "1",
+    "true",
+    "yes",
+)
+CORS_ALLOW_CREDENTIALS = not CORS_ALLOW_ALL_ORIGINS
 CSRF_TRUSTED_ORIGINS = _csv_env(
     "CSRF_TRUSTED_ORIGINS",
     defaults=tuple(CORS_ALLOWED_ORIGINS),
