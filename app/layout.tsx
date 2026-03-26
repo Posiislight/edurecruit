@@ -1,7 +1,13 @@
 import type { Metadata } from 'next'
+import { Montserrat } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Navbar } from '@/components/navbar'
 import './globals.css'
+
+const montserrat = Montserrat({ 
+  subsets: ["latin"],
+  variable: "--font-montserrat"
+});
 
 export const metadata: Metadata = {
   title: 'AdmitAI - Fair University Admissions',
@@ -33,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
+      <body className={`${montserrat.variable} font-sans antialiased`}>
         <Navbar />
         {children}
         <Analytics />
