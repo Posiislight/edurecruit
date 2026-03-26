@@ -10,24 +10,12 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: 'AdmitAI - Fair University Admissions',
+  title: 'UniLink - Fair University Admissions',
   description: 'AI-powered admissions screening with transparency and human oversight',
   generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
+    icon: '/edurecruit-favicon.svg',
+    shortcut: '/edurecruit-favicon.svg',
     apple: '/apple-icon.png',
   },
 }

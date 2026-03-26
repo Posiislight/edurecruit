@@ -50,11 +50,11 @@ export default function OfficerLoginPage() {
         <Card className="w-full max-w-md shadow-lg border-0 bg-white">
           <CardHeader className="space-y-2 text-center pb-6">
             <div className="mx-auto w-12 h-12 bg-primary rounded-xl text-white flex items-center justify-center font-bold text-xl mb-4 shadow-sm">
-              A
+              U
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight">Officer Portal Login</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Enter your credentials to access the AdmitAI dashboard
+              Enter your credentials to access the UniLink dashboard
             </CardDescription>
             <div className="mt-2 p-2 bg-amber-50 border border-amber-100 rounded-md text-xs text-amber-800">
               <strong>Demo Credentials:</strong><br/>
@@ -100,7 +100,7 @@ export default function OfficerLoginPage() {
           </CardContent>
           <CardFooter className="flex flex-col items-center justify-center border-t bg-muted/10 p-4">
             <p className="text-sm text-muted-foreground text-center">
-              Secure access provided by AdmitAI
+              Secure access provided by UniLink
             </p>
           </CardFooter>
         </Card>

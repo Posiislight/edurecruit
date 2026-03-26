@@ -290,7 +290,7 @@ export default function ProgrammesPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-10 mb-12">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2">EduRecruit</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">UniLink</h2>
               <p className="text-sm text-slate-400 max-w-sm">
                 Transparent, explainable, and fair AI-powered university admissions.
               </p>
@@ -311,7 +311,7 @@ export default function ProgrammesPage() {
           </div>
           <div className="border-t border-slate-700/50 pt-8 flex items-center justify-center md:justify-start">
             <p className="text-xs text-slate-500 flex items-center gap-2">
-              <span>&copy;</span> 2026 EduRecruit. Fairness In Admission
+              <span>&copy;</span> 2026 UniLink. Fairness In Admission
             </p>
           </div>
         </div>

@@ -42,7 +42,7 @@ export default function LandingPage() {
       <section className="bg-[#f8f9fa] py-24 w-full border-t border-slate-200 border-dashed">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-extrabold text-slate-900 mb-3">Why EduRecruit</h2>
+            <h2 className="text-3xl font-extrabold text-slate-900 mb-3">Why UniLink</h2>
             <p className="text-slate-600 text-lg">Accountability and fairness at every step of the admissions process.</p>
           </div>
 
@@ -132,7 +132,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-10 mb-12">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2">EduRecruit</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">UniLink</h2>
               <p className="text-sm text-slate-400 max-w-sm">
                 Transparent, explainable, and fair AI-powered university admissions.
               </p>
@@ -153,7 +153,7 @@ export default function LandingPage() {
           </div>
           <div className="border-t border-slate-700/50 pt-8 flex items-center justify-center md:justify-start">
             <p className="text-xs text-slate-500 flex items-center gap-2">
-              <span>&copy;</span> 2026 EduRecruit. Fairness in Admission
+              <span>&copy;</span> 2026 UniLink. Fairness in Admission
             </p>
           </div>
         </div>

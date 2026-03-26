@@ -240,7 +240,7 @@ export default function StudentStatusPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-10 mb-12">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2 font-sans">EduRecruit</h2>
+              <h2 className="text-2xl font-bold text-white mb-2 font-sans">UniLink</h2>
               <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
                 Transparent, explainable, and fair AI-powered university admissions.
               </p>
@@ -261,7 +261,7 @@ export default function StudentStatusPage() {
           </div>
           <div className="border-t border-slate-700/50 pt-8 text-center md:text-left">
             <p className="text-xs text-slate-500">
-              &copy; 2026 EduRecruit. Fairness in Admission
+              &copy; 2026 UniLink. Fairness in Admission
             </p>
           </div>
         </div>

@@ -217,7 +217,7 @@ export default async function ProgrammeDetailsPage({ params }: { params: Promise
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900 text-lg">JAMB Score Requirement</h4>
-                    <p className="text-slate-600 mt-2 leading-relaxed">{programme.requirements.split('. ')[1]}. Candidates must ensure they select EduRecruit University as their first choice institution.</p>
+                    <p className="text-slate-600 mt-2 leading-relaxed">{programme.requirements.split('. ')[1]}. Candidates must ensure they select UniLink University as their first choice institution.</p>
                   </div>
                 </li>
               </ul>
@@ -294,7 +294,7 @@ export default async function ProgrammeDetailsPage({ params }: { params: Promise
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-10 mb-12">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2">EduRecruit</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">UniLink</h2>
               <p className="text-sm text-slate-400 max-w-sm">
                 Transparent, explainable, and fair AI-powered university admissions.
               </p>
@@ -315,7 +315,7 @@ export default async function ProgrammeDetailsPage({ params }: { params: Promise
           </div>
           <div className="border-t border-slate-700/50 pt-8 flex items-center justify-center md:justify-start">
             <p className="text-xs text-slate-500 flex items-center gap-2">
-              <span>&copy;</span> 2026 EduRecruit. Fairness In Admission
+              <span>&copy;</span> 2026 UniLink. Fairness In Admission
             </p>
           </div>
         </div>

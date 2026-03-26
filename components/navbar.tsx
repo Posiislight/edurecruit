@@ -21,8 +21,8 @@ export function Navbar() {
       <nav className="border-b bg-white sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg text-primary">
-            <div className="w-8 h-8 bg-primary rounded-lg text-white flex items-center justify-center font-bold">A</div>
-            AdmitAI
+            <div className="w-8 h-8 bg-primary rounded-lg text-white flex items-center justify-center font-bold">U</div>
+            UniLink
           </Link>
           <div className="flex items-center gap-4">
             <Button variant="ghost" asChild className={pathname === '/dashboard' ? 'text-primary' : ''}>
@@ -47,7 +47,7 @@ export function Navbar() {
     <nav className="bg-[#f6f7f9] sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="font-bold text-2xl text-[#1a3042]">
-          EduRecruit
+          UniLink
         </Link>
         <div className="hidden md:flex items-center gap-8">
           <Link href="/" className={`text-sm font-medium transition-colors ${pathname === '/' ? 'text-[#38b2ac]' : 'text-slate-600 hover:text-slate-900'}`}>Home</Link>
