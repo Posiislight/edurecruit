@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { fetchApi } from '@/lib/api'
 
 export default function OfficerLoginPage() {
   const router = useRouter()
@@ -21,12 +22,8 @@ export default function OfficerLoginPage() {
     setError('')
     
     try {
-      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const response = await fetch(`${BASE_URL}/api/auth/login/`, {
+      const response = await fetchApi('/api/auth/login/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ username: email, password }),
       })
 

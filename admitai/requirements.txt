@@ -10,4 +10,3 @@ dj-database-url
 openai>=1.0.0
 gunicorn
 whitenoise
-gunicorn
