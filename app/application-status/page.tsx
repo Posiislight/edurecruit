@@ -102,7 +102,8 @@ export default function StudentStatusPage() {
             <Card className="border-0 shadow-xl overflow-hidden rounded-2xl">
               <div className={`h-2 ${
                 application.status === 'admitted' ? 'bg-green-500' : 
-                application.status === 'rejected' ? 'bg-red-500' : 'bg-amber-500'
+                application.status === 'rejected' ? 'bg-red-500' :
+                application.status === 'screened' ? 'bg-blue-500' : 'bg-amber-500'
               }`} />
               <CardContent className="p-10">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -123,6 +124,14 @@ export default function StudentStatusPage() {
                       ) : application.status === 'rejected' ? (
                         <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-0 flex gap-2 items-center px-4 py-2 font-bold rounded-full">
                           <XCircle className="w-5 h-5" /> Not Successful
+                        </Badge>
+                      ) : application.status === 'review' ? (
+                        <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-0 flex gap-2 items-center px-4 py-2 font-bold rounded-full">
+                          <Clock className="w-5 h-5" /> Manual Review Required
+                        </Badge>
+                      ) : application.status === 'screened' ? (
+                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-0 flex gap-2 items-center px-4 py-2 font-bold rounded-full">
+                          <ShieldCheck className="w-5 h-5" /> AI Screened
                         </Badge>
                       ) : (
                         <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-0 flex gap-2 items-center px-4 py-2 font-bold rounded-full">

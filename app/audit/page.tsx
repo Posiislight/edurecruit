@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -17,6 +17,7 @@ interface AuditEntry {
   id: number
   application: number
   application_reference: string
+  programme_id: number
   programme_name: string
   decision: 'admitted' | 'rejected' | 'review'
   ai_recommendation: 'admit' | 'reject' | 'review'
@@ -84,28 +85,25 @@ export default function AuditLogPage() {
     loadAuditData()
   }, [])
 
-  const filtered = useMemo(() => {
-    return entries.filter((entry) => {
-      const query = searchTerm.toLowerCase()
-      const matchesSearch =
-        !query ||
-        entry.student_name.toLowerCase().includes(query) ||
-        entry.programme_name.toLowerCase().includes(query) ||
-        entry.application_reference.toLowerCase().includes(query)
-      const matchesDecision = decisionFilter === 'all' || entry.decision === decisionFilter
-      const matchesProgramme =
-        programmeFilter === 'all' || entry.programme_name === programmes.find((programme) => programme.id.toString() === programmeFilter)?.name
-      const matchesOverride =
-        overrideFilter === 'all' ||
-        (overrideFilter === 'override' && entry.is_override) ||
-        (overrideFilter === 'aligned' && !entry.is_override)
-      const entryDate = entry.decided_at.slice(0, 10)
-      const matchesStart = !startDate || entryDate >= startDate
-      const matchesEnd = !endDate || entryDate <= endDate
+  const filtered = entries.filter((entry) => {
+    const query = searchTerm.toLowerCase()
+    const matchesSearch =
+      !query ||
+      entry.student_name.toLowerCase().includes(query) ||
+      entry.programme_name.toLowerCase().includes(query) ||
+      entry.application_reference.toLowerCase().includes(query)
+    const matchesDecision = decisionFilter === 'all' || entry.decision === decisionFilter
+    const matchesProgramme = programmeFilter === 'all' || entry.programme_id.toString() === programmeFilter
+    const matchesOverride =
+      overrideFilter === 'all' ||
+      (overrideFilter === 'override' && entry.is_override) ||
+      (overrideFilter === 'aligned' && !entry.is_override)
+    const entryDate = entry.decided_at.slice(0, 10)
+    const matchesStart = !startDate || entryDate >= startDate
+    const matchesEnd = !endDate || entryDate <= endDate
 
-      return matchesSearch && matchesDecision && matchesProgramme && matchesOverride && matchesStart && matchesEnd
-    })
-  }, [decisionFilter, endDate, entries, overrideFilter, programmeFilter, programmes, searchTerm, startDate])
+    return matchesSearch && matchesDecision && matchesProgramme && matchesOverride && matchesStart && matchesEnd
+  })
 
   const handleExportCSV = async () => {
     try {

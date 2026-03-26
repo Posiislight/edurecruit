@@ -7,6 +7,7 @@ class AuditLogSerializer(serializers.ModelSerializer):
     officer_name = serializers.CharField(source="decided_by.full_name", read_only=True)
     student_name = serializers.CharField(source="application.student_name", read_only=True)
     application_reference = serializers.CharField(source="application.reference_number", read_only=True)
+    programme_id = serializers.IntegerField(source="application.programme_id", read_only=True)
     programme_name = serializers.CharField(source="application.programme.name", read_only=True)
 
     class Meta:
@@ -15,6 +16,7 @@ class AuditLogSerializer(serializers.ModelSerializer):
             "id",
             "application",
             "application_reference",
+            "programme_id",
             "programme_name",
             "decision",
             "ai_recommendation",

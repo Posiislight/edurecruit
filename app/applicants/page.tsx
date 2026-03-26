@@ -65,6 +65,9 @@ function formatStatus(status: ApplicantRecord['status']) {
 }
 
 function formatRecommendation(recommendation?: ScreeningDecision['recommendation']) {
+  if (!recommendation) {
+    return { label: 'Pending', className: 'bg-slate-100 text-slate-700' }
+  }
   if (recommendation === 'admit') {
     return { label: 'Admit', className: 'bg-blue-100 text-blue-800' }
   }
@@ -76,6 +79,9 @@ function formatRecommendation(recommendation?: ScreeningDecision['recommendation
 }
 
 function formatConfidence(confidence?: ScreeningDecision['confidence']) {
+  if (!confidence) {
+    return { label: 'Pending', className: 'bg-slate-100 text-slate-700' }
+  }
   if (confidence === 'high') {
     return { label: 'High', className: 'bg-green-100 text-green-800' }
   }
@@ -227,7 +233,7 @@ export default function ApplicantsPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">Sort By</label>
-                <Select value={sortBy} onValueChange={(value: 'name' | 'jamb' | 'aiScore') => setSortBy(value)}>
+                <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'name' | 'jamb' | 'aiScore')}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

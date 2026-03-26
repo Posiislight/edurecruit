@@ -28,14 +28,14 @@ class AuditLogListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AuditLogSerializer
     filterset_class = AuditLogFilter
-    queryset = AuditLog.objects.select_related("application", "decided_by").all()
+    queryset = AuditLog.objects.select_related("application", "application__programme", "decided_by").all()
 
 
 class AuditLogExportView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        qs = AuditLog.objects.select_related("application", "decided_by").order_by("-decided_at")
+        qs = AuditLog.objects.select_related("application", "application__programme", "decided_by").order_by("-decided_at")
         programme = request.query_params.get("programme")
         decision = request.query_params.get("decision")
         is_override = request.query_params.get("is_override")

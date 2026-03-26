@@ -210,7 +210,7 @@ export default function ApplicantDetailPage({ params }: { params: Promise<{ id: 
                       </tr>
                     </thead>
                     <tbody>
-                      {applicantData.olevels.map((result, index) => (
+                      {applicantData.olevels.map((result: { subject: string; grade: string; points?: number }, index: number) => (
                         <tr key={index} className="border-b hover:bg-muted/50">
                           <td className="py-3 px-3">{result.subject}</td>
                           <td className="py-3 px-3">

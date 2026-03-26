@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CheckCircle2, Eye, CircleHelp, Scale } from 'lucide-react'
+import { CheckCircle2, Eye, CircleHelp, Scale, ShieldCheck, UserCheck, FileText } from 'lucide-react'
 
 export default function LandingPage() {
   return (
@@ -24,15 +24,15 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-6 text-sm font-medium text-slate-300">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="text-[#38b2ac] w-5 h-5" />
-              <span>GDPR Compliant</span>
+              <span>Decision Trace Available</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="text-[#38b2ac] w-5 h-5" />
-              <span>Bias-Audited</span>
+              <span>Bias Checks Included</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="text-[#38b2ac] w-5 h-5" />
-              <span>Human-in-the-Loop</span>
+              <span>Manual Review Escalation</span>
             </div>
           </div>
         </div>
@@ -75,6 +75,53 @@ export default function LandingPage() {
               <p className="text-slate-600 leading-relaxed text-sm w-[90%] mx-auto">
                 AI assists &mdash; humans decide. Officers review, override, and approve every application.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-24 w-full border-t border-slate-200">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-3xl mb-14">
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#38b2ac] mb-3">Fairness & Evaluation</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">How trust is enforced in every admission review</h2>
+            <p className="text-slate-600 text-lg leading-relaxed">
+              The system shows what counts, ignores what should not count, and sends uncertain cases to a human officer instead of making silent decisions.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 text-[#1a2f44]">
+                <ShieldCheck className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Data the AI ignores</h3>
+              <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
+                <p>Name, gender, and state of origin are excluded from automated scoring.</p>
+                <p>The scoring view stays focused on JAMB, O&apos;level performance, sittings, and result recency.</p>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 text-[#1a2f44]">
+                <UserCheck className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-4">When humans intervene</h3>
+              <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
+                <p>If automated screening is unavailable, the application is routed to manual review instead of auto-rejection.</p>
+                <p>Officers can approve, reject, or override recommendations, but every override needs a reason.</p>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-6 text-[#1a2f44]">
+                <FileText className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-4">What gets logged</h3>
+              <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
+                <p>Each final decision stores the AI recommendation, score, officer identity, timestamp, and any override note.</p>
+                <p>Students see a short reason summary and score breakdown instead of opaque model reasoning.</p>
+              </div>
             </div>
           </div>
         </div>
