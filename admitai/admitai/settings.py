@@ -11,6 +11,14 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+def _csv_env(name, defaults=()):
+    values = list(defaults)
+    raw = os.environ.get(name, "")
+    if raw:
+        values.extend(item.strip() for item in raw.split(",") if item.strip())
+    return list(dict.fromkeys(values))
+
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-change-me")
 DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
 HAS_WHITENOISE = find_spec("whitenoise") is not None
@@ -20,8 +28,13 @@ if not DEBUG and not HAS_WHITENOISE:
         "whitenoise must be installed when DEBUG is disabled."
     )
 
-_allowed = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1")
-ALLOWED_HOSTS = [h.strip() for h in _allowed.split(",") if h.strip()]
+ALLOWED_HOSTS = _csv_env(
+    "ALLOWED_HOSTS",
+    defaults=("localhost", "127.0.0.1", "edurecruit-production.up.railway.app"),
+)
+railway_public_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+if railway_public_domain and railway_public_domain not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(railway_public_domain)
 if DEBUG and "testserver" not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append("testserver")
 
@@ -118,9 +131,25 @@ AUTH_USER_MODEL = "accounts.Officer"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-_cors = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000")
-CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors.split(",") if o.strip()]
+CORS_ALLOWED_ORIGINS = _csv_env(
+    "CORS_ALLOWED_ORIGINS",
+    defaults=(
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://v0-edurecruit.vercel.app",
+    ),
+)
+frontend_url = os.environ.get("FRONTEND_URL")
+if frontend_url and frontend_url not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(frontend_url)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*-edurecruit\.vercel\.app$",
+]
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = _csv_env(
+    "CSRF_TRUSTED_ORIGINS",
+    defaults=tuple(CORS_ALLOWED_ORIGINS),
+)
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
